@@ -1,0 +1,30 @@
+version: "3"
+services:
+  bootnode:
+    image: ethereum/client-go:alltools-release-1.8
+    command: bootnode --nat=none --nodekey /opt/bootnode/boot.key --verbosity=5 --addr="0.0.0.0:30301"
+    networks:
+      - chain
+    ports:
+      - "30301:30301/tcp"
+      - "30301:30301/udp"
+    deploy:
+      replicas: 1
+    volumes:
+      - ./bootnode:/opt/bootnode
+  node0:
+    image: ethereum/client-go:alltools-release-1.8
+    command: geth --networkid=331788 --bootnodes="encode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@chain:30301" --rpc --rpcaddr="0.0.0.0" --rpcapi="db,eth,net,web3,personal" --rpccorsdomain="*" --cache=200 --verbosity=5 --port=30303 node1
+    networks:
+      - chain
+    ports:
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+      - "8545:8545/tcp"
+      - "8545:8545/udp"
+    volumes:
+      - ./data/node1:/root/.ethereum
+      - ./ethash/node1:/root/.ethash
+      - ./genesis.json:/opt/genesis.json
+networks:
+  chain:
