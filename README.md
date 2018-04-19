@@ -35,7 +35,7 @@ mkdir bootnode
 # 生成唯一标示的key
 docker run --rm \
         -v $(pwd)/bootnode:/opt/bootnode \
-        ethereum/client-go:alltools-stable bootnode --genkey /opt/bootnode/boot.key
+        ethereum/client-go:alltools-release-1.8 bootnode --genkey /opt/bootnode/boot.key
 # 启动bootnode
 docker run -d --name ethereum-bootnode \
     -v $(pwd)/bootnode:/opt/bootnode \
