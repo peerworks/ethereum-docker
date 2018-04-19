@@ -49,6 +49,23 @@ services:
     build:
       context: ./netstats
     image: tzion/netstats
+    depends_on:
+      - bootnode
+      - node0
+      - node1
+    networks:
+      chain:
+        ipv4_address: 172.16.238.22
+    ports:
+      - "30305:30305/tcp"
+      - "30305:30305/udp"
+      - "8547:8547/tcp"
+      - "8547:8547/udp"
+      - "3000:3000"
+    volumes:
+      - ./data/netstas:/root/.ethereum
+      - ./ethash/netstats:/root/.ethash
+      - ./genesis.json:/opt/genesis.json
 networks:
   chain:
     driver: bridge

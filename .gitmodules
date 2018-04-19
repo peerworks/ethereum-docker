@@ -1,0 +1,6 @@
+[submodule "netstats/api"]
+	path = netstats/api
+	url = https://github.com/peerworks/eth-net-intelligence-api.git
+[submodule "netstats/web"]
+	path = netstats/web
+	url = https://github.com/peerworks/eth-netstats.git
