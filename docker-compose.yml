@@ -45,6 +45,10 @@ services:
       - ./data/node2:/root/.ethereum
       - ./ethash/node2:/root/.ethash
       - ./genesis.json:/opt/genesis.json
+  netstats:
+    build:
+      context: ./netstats
+    image: tzion/netstats
 networks:
   chain:
     driver: bridge
