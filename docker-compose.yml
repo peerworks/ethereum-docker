@@ -12,8 +12,10 @@ services:
     volumes:
       - ./bootnode:/opt/bootnode
   node0:
-    image: ethereum/client-go:alltools-release-1.8
-    command: geth --networkid=331788 --bootnodes="enode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@172.16.238.10:30301" --rpc --rpcaddr="0.0.0.0" --rpcapi="db,eth,net,web3,personal" --rpccorsdomain="*" --cache=200 --verbosity=4 --port=30303 node1
+    image: tzion/peer
+    build:
+      context: ./peers
+    command: geth --networkid=331788 --datadir=/ethereum/data --ethash.dagdir=/ethereum/ethash --bootnodes="enode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@172.16.238.10:30301" --rpc --rpcaddr="0.0.0.0" --rpcapi="db,eth,net,web3,personal" --rpccorsdomain="*" --cache=200 --verbosity=4 --port=30303 node1
     networks:
       chain:
         ipv4_address: 172.16.238.20
@@ -25,39 +27,22 @@ services:
       - "8545:8545/tcp"
       - "8545:8545/udp"
     volumes:
-      - ./data/node1:/root/.ethereum
-      - ./ethash/node1:/root/.ethash
-      - ./genesis.json:/opt/genesis.json
-  node1:
-    image: ethereum/client-go:alltools-release-1.8
-    command: geth --networkid=331788 --bootnodes="enode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@172.16.238.10:30301" --rpc --rpcaddr="0.0.0.0" --rpcapi="db,eth,net,web3,personal" --rpccorsdomain="*" --cache=200 --verbosity=4 --port=30304 node1
-    networks:
-      chain:
-        ipv4_address: 172.16.238.21
-    depends_on:
-      - bootnode
-    ports:
-      - "30304:30304/tcp"
-      - "30304:30304/udp"
-      - "8546:8546/tcp"
-      - "8546:8546/udp"
-    volumes:
-      - ./data/node2:/root/.ethereum
-      - ./ethash/node2:/root/.ethash
-      - ./genesis.json:/opt/genesis.json
+      - ./data/node1:/ethereum/data:rw
+      - ./ethash/node1:/ethereum/ethash:rw
   miner0:
-    image: ethereum/client-go:alltools-release-1.8
-    command: geth --networkid=331788 --bootnodes="enode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@172.16.238.10:30301" --etherbase="0x7972e30fb4b895e4478d3217711f2736359722e5" --mine --minerthreads=4 --verbosity=4
+    image: tzion/peer
+    build:
+      context: ./peers
+    command: geth --networkid=331788 --datadir=/ethereum/data --ethash.dagdir=/ethereum/ethash --bootnodes="enode://f5e80a12c9aa63ba2ce96d03c13eaf2bafd295f62383feb0af383d29a0c7d78c80049fd63671e703564b400b890e5e1afabece47939883cc8723ffd14976ab6a@172.16.238.10:30301" --etherbase="0x7972e30fb4b895e4478d3217711f2736359722e5" --mine --minerthreads=4 --verbosity=4
     networks:
       chain:
         ipv4_address: 172.16.238.31
     depends_on:
       - bootnode
     volumes:
-      - ./data/miner0:/root/.ethereum
-      - ./credentials/keystore/:/root/.ethereum/keystore
-      - ./ethash/miner0:/root/.ethash
-      - ./genesis.json:/opt/genesis.json
+      - ./data/miner0:/ethereum/data:rw
+      - ./ethash/miner0:/ethereum/ethash:rw
+      - ./credentials/keystore/:/ethereum/data/keystore:rw
   netstats:
     build:
       context: ./netstats
@@ -65,10 +50,9 @@ services:
     depends_on:
       - bootnode
       - node0
-      - node1
     networks:
       chain:
-        ipv4_address: 172.16.238.22
+        ipv4_address: 172.16.238.40
     ports:
       - "30305:30305/tcp"
       - "30305:30305/udp"
@@ -76,10 +60,8 @@ services:
       - "8547:8547/udp"
       - "3000:3000"
     volumes:
-      - ./data/netstas:/root/.ethereum
-      - ./credentials/keystore:/root/.ethereum/keystore
-      - ./ethash/netstats:/root/.ethash
-      - ./genesis.json:/opt/genesis.json
+      - ./data/netstats:/ethereum/data:rw
+      - ./ethash/netstats:/ethereum/ethash:rw
 networks:
   chain:
     driver: bridge
