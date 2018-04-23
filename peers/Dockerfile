@@ -5,3 +5,7 @@ WORKDIR /ethereum
 VOLUME /ethereum/data
 
 COPY genesis.json /ethereum/
+COPY entrypoint /bin/entrypoint
+
+ENTRYPOINT ["/bin/entrypoint"]
+
