@@ -1,4 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
+geth --datadir=/ethereum/data --ethash.dagdir=/ethereum/ethash init /ethereum/genesis.json
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 exec "$@"
